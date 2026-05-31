@@ -61,6 +61,12 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+      
+      - name: Debug Repository
+        run: |
+         pwd
+         ls -la
+         find . -maxdepth 2 -type d | sort
 
       - name: Terraform Format Check
         working-directory: WorkFunctionApp/Infra
