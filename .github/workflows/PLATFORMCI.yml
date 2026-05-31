@@ -71,7 +71,7 @@ jobs:
         run: terraform init -backend=false
 
       - name: Terraform Validate
-        working-directory: WorkFunctionApp/infra
+        working-directory: WorkFunctionApp/Infra
         run: terraform validate
 
       - name: Upload Terraform Artifact
