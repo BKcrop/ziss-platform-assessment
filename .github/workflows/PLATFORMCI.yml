@@ -1,0 +1,82 @@
+name: PLATFORM-CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: src/WorkFunctionApp
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore Packages
+        run: dotnet restore
+
+      - name: Build Solution
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Skip Tests
+        run: echo "No tests implemented yet"
+
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+
+      - name: Publish Azure Function
+        run: |
+          dotnet publish \
+            --configuration Release \
+            --output ./publish
+
+      - name: Create Deployment Package
+        run: |
+          cd publish
+          zip -r ../functionapp.zip .
+
+      - name: Upload Function Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: functionapp
+          path: src/WorkFunctionApp/functionapp.zip
+          retention-days: 7
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Format Check
+        working-directory: infra
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: infra
+        run: terraform validate
+
+      - name: Upload Terraform Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform
+          path: infra
+          retention-days: 7
