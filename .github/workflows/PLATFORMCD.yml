@@ -81,4 +81,4 @@ jobs:
         uses: Azure/functions-action@v1
         with:
           app-name: func-platform-${{ github.event.inputs.environment }}
-          package: src/WorkFunctionApp/publish
+          package: WorkFunctionApp/publish
