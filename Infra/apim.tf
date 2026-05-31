@@ -17,18 +17,6 @@ resource "azurerm_api_management_api" "function_api" {
   protocols = ["https"]
 }
 
-
-resource "azurerm_api_management_api" "function_api" {
-name = "work-api"
-resource_group_name = azurerm_resource_group.rg.name
-api_management_name = azurerm_api_management.apim.name
-revision = "1"
-display_name = "Work API"
-path = "work"
-protocols = ["https"]
-}
-
-
 resource "azurerm_api_management_api_operation" "health_live" {
 operation_id = "health-live"
 api_name = azurerm_api_management_api.function_api.name
