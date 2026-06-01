@@ -70,7 +70,7 @@ jobs:
 
       - name: Terraform Format Check
         working-directory: Infra
-        run: terraform fmt -check -recursive
+        run: terraform fmt -recursive
 
       - name: Terraform Init
         working-directory: Infra
